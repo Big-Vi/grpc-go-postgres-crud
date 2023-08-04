@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: realtime-dashboard-grpc
+    image: realtime-dashboard-grpc
+    build:
+      context: .
+    volumes:
+      - .:/app
+    depends_on:
+      - database
+    networks:
+      - realtime-dashboard-grpc_net
+    ports:
+      - 50052:50052
+  database:
+    container_name: realtime-dashboard-grpc-postgres
+    image: postgres
+    restart: always
+    hostname: db
+    networks:
+      - realtime-dashboard-grpc_net
+    env_file:
+      - app.env
+    ports:
+      - "3002:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
+
+networks:
+  realtime-dashboard-grpc_net:
+    driver: bridge
