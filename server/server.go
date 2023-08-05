@@ -6,20 +6,16 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 
+	"github.com/Big-Vi/realtime-dashboard-grpc-go-react/db"
 	"github.com/Big-Vi/realtime-dashboard-grpc-go-react/orderpb"
 	"google.golang.org/grpc"
+	"github.com/joho/godotenv"
 )
 
 type server struct {
 	orderpb.OrderServiceServer
-}
-
-type OrderItem struct {
-	ID string `json:"id"`
-	CustomerID string `json:"customer_id"`
-	ProductName string `json:"product_name"`
-	Price int32 `json:"price"`
 }
 
 func (s *server) CreateOrder(ctx context.Context, req *orderpb.CreateOrderRequest) (*orderpb.CreateOrderResponse, error){
@@ -34,7 +30,7 @@ func (s *server) CreateOrder(ctx context.Context, req *orderpb.CreateOrderReques
 	// }
 	return &orderpb.CreateOrderResponse{
 		Order: &orderpb.Order{
-			Id: "555",
+			Id: "5559",
 			CustomerId: order.GetCustomerId(),
 			ProductName: order.GetProductName(),
 			Price: order.GetPrice(),
@@ -43,6 +39,17 @@ func (s *server) CreateOrder(ctx context.Context, req *orderpb.CreateOrderReques
 }
 
 func main() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("Some error occured. Err: %s", err)
+	}
+
+	_, err = db.InitDB()
+	if err != nil {
+		log.Fatalf("DB connection went wrong: %v", err)
+		os.Exit(1)
+	}
+
 	flag.Parse()
 	lis, err := net.Listen("tcp", "0.0.0.0:50052")
 	if err != nil {

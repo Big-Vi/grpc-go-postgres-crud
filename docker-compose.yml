@@ -22,7 +22,7 @@ services:
     networks:
       - realtime-dashboard-grpc_net
     env_file:
-      - app.env
+      - .env
     ports:
       - "3002:5432"
     volumes:

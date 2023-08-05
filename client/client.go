@@ -37,7 +37,7 @@ func main() {
 	order := &orderpb.Order{
 		CustomerId: "666",
 		ProductName: "Test",
-		Price: 99,
+		Price: 999,
 	}
 	createOrderRes, err := c.CreateOrder(context.Background(), &orderpb.CreateOrderRequest{Order: order})
 	if err != nil {
