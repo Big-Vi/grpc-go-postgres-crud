@@ -11,13 +11,8 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-const (
-	defaultName = "world"
-)
-
 var (
 	addr = flag.String("addr", "localhost:50052", "the address to connect to")
-	name = flag.String("name", defaultName, "Name to greet")
 )
 
 func main() {
@@ -31,17 +26,65 @@ func main() {
 
 	c := orderpb.NewOrderServiceClient(conn)
 
-	// Create Order
-	fmt.Println("Creating order req")
+	createOrder(c)
+	updateOrder(c)
+	readOrder(c)
+	listAllOrders(c)
+	deleteOrder(c)
+}
+
+func createOrder(c orderpb.OrderServiceClient) {
+	fmt.Println("Req for creating order")
 
 	order := &orderpb.Order{
 		CustomerId: "666",
-		ProductName: "Test",
+		ProductName: "Testing",
 		Price: 999,
+		Quantity: 1,
 	}
 	createOrderRes, err := c.CreateOrder(context.Background(), &orderpb.CreateOrderRequest{Order: order})
 	if err != nil {
 		log.Fatalf("Unexpected error: %v", err)
 	}
 	fmt.Println(createOrderRes)
+}
+
+func updateOrder(c orderpb.OrderServiceClient) {
+	fmt.Println("Req for updating order")
+	order := &orderpb.Order{
+		Id: 1,
+		Quantity: 5,
+	}
+	updateOrderRes, err := c.UpdateOrder(context.Background(), &orderpb.UpdateOrderRequest{Order: order})
+	if err != nil {
+		log.Fatalf("Unexpected error: %v", err)
+	}
+	fmt.Println(updateOrderRes)
+}
+
+func readOrder(c orderpb.OrderServiceClient) {
+	fmt.Println("Req for reading order")
+	readOrderRes, err := c.ReadOrder(context.Background(), &orderpb.ReadOrderRequest{OrderId: 1})
+	if err != nil {
+		log.Fatalf("Unexpected error: %v", err)
+	}
+	fmt.Println(readOrderRes)
+}
+
+func listAllOrders(c orderpb.OrderServiceClient) {
+	fmt.Println("Req for listing all orders")
+	listAllOrdersRes, err := c.ListAllOrders(context.Background(), &orderpb.ListAllOrdersRequest{})
+	if err != nil {
+		log.Fatalf("Unexpected error: %v", err)
+	}
+	fmt.Println(listAllOrdersRes)
+}
+
+func deleteOrder(c orderpb.OrderServiceClient) {
+	fmt.Println("Req for deleting order")
+	deleteOrderRes, err := c.DeleteOrder(context.Background(), &orderpb.DeleteOrderRequest{OrderId: 1})
+	if err != nil {
+		log.Fatalf("Unexpected error: %v", err)
+	}
+	fmt.Println(deleteOrderRes)
 }
